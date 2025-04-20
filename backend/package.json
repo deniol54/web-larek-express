@@ -4,7 +4,7 @@
   "description": "< Добавьте описание проекта в свободной форме >",
   "main": "dist/app.js",
   "scripts": {
-    "lint": "npx eslint src/**/*.ts",
+    "lint": "npx eslint src/**/*.ts --fix",
     "build": "tsc",
     "dev": "npx nodemon -L src/app.ts ",
     "start": "ts-node src/app.ts",
@@ -26,6 +26,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "dotenv": "^16.5.0",
     "express": "^4.19.2",
     "mongoose": "^8.3.2",
     "validator": "^13.11.0"
