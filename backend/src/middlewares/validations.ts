@@ -32,7 +32,7 @@ export const productSchema = Joi.object({
 export const orderSchema = Joi.object({
   items: Joi.array().items(Joi.string()).external(checkProducts).required(),
   total: Joi.number().required(),
-  payment: Joi.string().allow('card', 'online').required(),
+  payment: Joi.string().valid('card', 'online').required(),
   email: Joi.string().email().required(),
   phone: Joi.string().regex(/(?:\+|\d)[\d\-()]{9,}\d/).required(),
   address: Joi.string().required(),

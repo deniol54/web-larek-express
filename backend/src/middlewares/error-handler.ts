@@ -4,7 +4,7 @@ import BadRequestError from '../errors/bad-request-error';
 import ConflictError from '../errors/conflict-error';
 import NotFoundError from '../errors/not-found-error';
 
-const errorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (error: any, req: Request, res: Response) => {
   if (isCelebrateError(error)) {
     const validation: Record<string, any> = {};
     for (const [segment, joiError] of error.details.entries()) {
