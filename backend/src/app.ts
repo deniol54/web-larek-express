@@ -6,6 +6,7 @@ import cors from 'cors';
 import { errors } from 'celebrate';
 import errorHandler from './middlewares/error-handler';
 import router from './routes';
+import { requestLogger, errorLogger } from './middlewares/loggers';
 
 const { PORT = 3000, DB_ADDRESS = 'mongodb://127.0.0.1:27017/weblarek' } = process.env;
 const app = express();
@@ -13,12 +14,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(errors());
 
-// напишите код здесь
 mongoose.connect(DB_ADDRESS);
-
-app.use('/product', router, errorHandler);
+app.use(requestLogger);
+app.use('/', router);
+app.use(errorLogger);
+app.use(errors());
+app.use(errorHandler);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

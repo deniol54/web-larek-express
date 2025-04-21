@@ -11,7 +11,7 @@ const errorHandler = (error: any, req: Request, res: Response, next: NextFunctio
       validation[segment] = {
         source: segment,
         keys: joiError.details.map((d) => d.path.join('.')),
-        message: joiError.details.map((d) => d.message).join(', '),
+        message: joiError.details.map((d) => d.context?.message || d.message).join(', '),
       };
     }
     return res.status(400).json({
@@ -31,7 +31,7 @@ const errorHandler = (error: any, req: Request, res: Response, next: NextFunctio
     return res.status(error.statusCode).send({ message: error.message });
   }
 
-  return res.status(500).send({ message: 'Ошибка сервера' });
+  return res.status(500).send({ message: 'Ошибка сервера', error });
 };
 
 export default errorHandler;

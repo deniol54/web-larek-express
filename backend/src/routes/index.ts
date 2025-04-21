@@ -1,17 +1,10 @@
 import { Router } from 'express';
-import { celebrate, Segments } from 'celebrate';
-import { getProducts, createProduct } from '../controllers/product';
-import { productSchema } from '../middlewares/validations';
+import productRouter from './product';
+import orderRouter from './order';
 
 const router = Router();
 
-const productRouteValidator = celebrate({
-  [Segments.BODY]: productSchema,
-}, {
-  abortEarly: false, // Возвращать все ошибки, а не только первую
-});
-
-router.get('/', getProducts);
-router.post('/', productRouteValidator, createProduct);
+router.use('/product', productRouter);
+router.use('/order', orderRouter);
 
 export default router;
