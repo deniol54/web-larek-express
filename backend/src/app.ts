@@ -24,6 +24,4 @@ app.use(errorHandler);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(PORT, () => {
-  console.log('Ссылка на сервер');
-});
+app.listen(PORT, () => {});

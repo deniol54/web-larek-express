@@ -4,21 +4,13 @@ import BadRequestError from '../errors/bad-request-error';
 import ConflictError from '../errors/conflict-error';
 import NotFoundError from '../errors/not-found-error';
 
-const errorHandler = (error: any, req: Request, res: Response) => {
+const errorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
   if (isCelebrateError(error)) {
-    const validation: Record<string, any> = {};
-    for (const [segment, joiError] of error.details.entries()) {
-      validation[segment] = {
-        source: segment,
-        keys: joiError.details.map((d) => d.path.join('.')),
-        message: joiError.details.map((d) => d.context?.message || d.message).join(', '),
-      };
-    }
     return res.status(400).json({
       statusCode: 400,
       error: 'Bad Request',
       message: 'Validation failed',
-      validation,
+      validation: error.details,
     });
   }
   if (error instanceof BadRequestError) {
