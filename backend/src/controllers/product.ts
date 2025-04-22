@@ -4,7 +4,7 @@ import product from '../models/product';
 import BadRequestError from '../errors/bad-request-error';
 import ConflictError from '../errors/conflict-error';
 
-export const getProducts = (req: Request, res: Response, next: NextFunction) => product.find({})
+export const getProducts = (_req: Request, res: Response, next: NextFunction) => product.find({})
   .then((products) => res.send({ items: products, total: products.length }))
   .catch(() => next());
 

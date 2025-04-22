@@ -4,7 +4,7 @@ import BadRequestError from '../errors/bad-request-error';
 import ConflictError from '../errors/conflict-error';
 import NotFoundError from '../errors/not-found-error';
 
-const errorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
+const errorHandler = (error: any, _req: Request, res: Response, _next: NextFunction) => {
   if (isCelebrateError(error)) {
     return res.status(400).json({
       statusCode: 400,
