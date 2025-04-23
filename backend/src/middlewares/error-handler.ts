@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { isCelebrateError } from 'celebrate';
-import BadRequestError from '../errors/bad-request-error';
-import ConflictError from '../errors/conflict-error';
-import NotFoundError from '../errors/not-found-error';
 
 const errorHandler = (error: any, _req: Request, res: Response, _next: NextFunction) => {
   if (isCelebrateError(error)) {
@@ -13,13 +10,7 @@ const errorHandler = (error: any, _req: Request, res: Response, _next: NextFunct
       validation: error.details,
     });
   }
-  if (error instanceof BadRequestError) {
-    return res.status(error.statusCode).send({ message: error.message });
-  }
-  if (error instanceof ConflictError) {
-    return res.status(error.statusCode).send({ message: error.message });
-  }
-  if (error instanceof NotFoundError) {
+  if (error.statusCode) {
     return res.status(error.statusCode).send({ message: error.message });
   }
 

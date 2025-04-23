@@ -10,12 +10,12 @@ const checkProducts = async (productIds: string[]) => {
   });
   const missingIds = productIds.filter((id) => !products.some((p) => p._id.toString() === id));
   if (missingIds.length) {
-    return missingIds[0];
+    throw new BadRequestError(`Товар с id ${missingIds[0]} не найден`);
   }
   return 0;
 };
 
-const checkTotal = async (productIds: string[]) => {
+const checkTotal = async (productIds: string[], total: number) => {
   const res = await product.aggregate([
     {
       $match: {
@@ -29,7 +29,11 @@ const checkTotal = async (productIds: string[]) => {
       },
     },
   ]);
-  return res[0]?.totalSum || 0;
+  const totalSum = res[0]?.totalSum || 0;
+  if ((totalSum !== total)) {
+    throw new BadRequestError('Неверная сумма заказа');
+  }
+  return 0;
 };
 
 const checkPrice = async (productIds: string[]) => {
@@ -38,27 +42,22 @@ const checkPrice = async (productIds: string[]) => {
   });
   const missingIds = products.filter((prod) => prod.price === null);
   if (missingIds.length) {
-    return missingIds[0]._id;
+    throw new BadRequestError(`Товар с id ${missingIds[0]._id} не продается`);
   }
   return 0;
 };
 
 export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
-  const { items, total } = req.body;
-  const missId = await checkProducts(items);
-  if (missId) {
-    return next(new BadRequestError(`Товар с id ${missId} не найден`));
+  try {
+    const { items, total } = req.body;
+    await checkProducts(items);
+    await checkPrice(items);
+    await checkTotal(items, total);
+    const id = faker.string.uuid();
+    return res.status(200).send({ id, total });
+  } catch (error) {
+    return next(error);
   }
-  const noBuyId = await checkPrice(items);
-  if (noBuyId) {
-    return next(new BadRequestError(`Товар с id ${noBuyId} не продается`));
-  }
-  const validTotal = await checkTotal(items);
-  if (validTotal !== total) {
-    return next(new BadRequestError('Неверная сумма заказа'));
-  }
-  const id = faker.string.uuid();
-  return res.status(200).send({ id, total });
 };
 
 export default createOrder;
